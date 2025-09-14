@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 interface Caption {
     start: number;
     duration: number;
@@ -62,7 +62,7 @@ export const useCaptions = (videoId: string) => {
         return parsedCaptions;
     };
 
-    const fetchCaptions = async (videoId: string) => {
+    const fetchCaptions = useCallback(async (videoId: string) => {
         const API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY;
 
         if (!API_KEY || API_KEY === 'your_youtube_api_key_here') {
@@ -86,8 +86,15 @@ export const useCaptions = (videoId: string) => {
             const captionsData = await captionsResponse.json();
             const tracks = captionsData.items || [];
 
+            interface CaptionTrack {
+                snippet: {
+                    language: string;
+                    name: string;
+                };
+            }
+
             // Find Korean caption track
-            const koreanTrack = tracks.find((track: any) =>
+            const koreanTrack = tracks.find((track: CaptionTrack) =>
                 track.snippet.language === 'ko' || track.snippet.language === 'ko-KR'
             );
 
@@ -108,7 +115,7 @@ export const useCaptions = (videoId: string) => {
                 } else {
                     throw new Error('Cannot fetch captions due to CORS policy');
                 }
-            } catch (corsError) {
+            } catch {
                 // Fallback: create sample captions for demonstration
                 setError('Captions are available but cannot be fetched due to browser security policies. Using sample captions for demonstration.');
 
@@ -128,13 +135,13 @@ export const useCaptions = (videoId: string) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         if (videoId) {
             fetchCaptions(videoId);
         }
-    }, [videoId]);
+    }, [videoId, fetchCaptions]);
 
     const getCurrentCaption = (currentTime: number): Caption | null => {
         return captions.find(caption =>

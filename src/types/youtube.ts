@@ -29,8 +29,8 @@ declare global {
                     width: string;
                     videoId: string;
                     events: {
-                        onReady: (event: any) => void;
-                        onStateChange: (event: any) => void;
+                        onReady: (event: { target: YouTubePlayer }) => void;
+                        onStateChange: (event: { data: number }) => void;
                     };
                 }
             ) => YouTubePlayer;

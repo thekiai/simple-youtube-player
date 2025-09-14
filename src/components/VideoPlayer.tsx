@@ -4,7 +4,7 @@ import { useYouTubePlayer } from '../hooks/useYouTubePlayer';
 interface VideoPlayerProps {
   videoId: string;
   onTimeUpdate?: (currentTime: number) => void;
-  onPlayerReady?: (player: any) => void;
+  onPlayerReady?: (player: ReturnType<typeof useYouTubePlayer>['player']) => void;
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({ 
