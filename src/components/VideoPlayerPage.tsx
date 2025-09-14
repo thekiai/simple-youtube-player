@@ -1,7 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PlayerControls } from '../components/PlayerControls';
+import { FavoriteSegmentForm } from '../components/FavoriteSegmentForm';
 import { YouTubePlayer } from '../types/youtube';
+import { useFavoriteSegments } from '../hooks/useFavoriteSegments';
+import { CreateFavoriteSegment } from '../types/favorite';
 
 interface VideoPlayerPageProps {
   videoId: string;
@@ -11,6 +14,10 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  
+  // お気に入りの管理
+  const { addFavorite, removeFavorite, updateFavorite, getFavoritesByVideoId } = useFavoriteSegments();
+  const currentVideoFavorites = getFavoritesByVideoId(videoId);
 
   const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
@@ -44,6 +51,32 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
     }
   };
 
+  // お気に入りを追加
+  const handleAddFavorite = useCallback((segment: CreateFavoriteSegment) => {
+    addFavorite(segment);
+  }, [addFavorite]);
+
+  // お気に入りを削除
+  const handleDeleteFavorite = useCallback((id: string) => {
+    removeFavorite(id);
+  }, [removeFavorite]);
+
+  // お気に入りを更新
+  const handleUpdateFavorite = useCallback((id: string, updates: { name: string }) => {
+    updateFavorite(id, updates);
+  }, [updateFavorite]);
+
+  // お気に入りを再生
+  const handlePlaySegment = useCallback((segment: CreateFavoriteSegment) => {
+    if (player) {
+      // 開始時間に移動
+      player.seekTo(segment.startTime, true);
+      // 再生開始
+      player.playVideo();
+      setIsPlaying(true);
+    }
+  }, [player]);
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">
       {/* Video Player */}
@@ -53,6 +86,17 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
         onPlayerReady={handlePlayerReady}
       />
 
+      {/* Favorite Segment Form & List */}
+      <FavoriteSegmentForm
+        videoId={videoId}
+        currentTime={currentTime}
+        onAddFavorite={handleAddFavorite}
+        favorites={currentVideoFavorites}
+        onPlaySegment={handlePlaySegment}
+        onDeleteSegment={handleDeleteFavorite}
+        onUpdateSegment={handleUpdateFavorite}
+      />
+
       {/* Player Controls */}
       <PlayerControls
         isPlaying={isPlaying}
@@ -60,12 +104,6 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
         onPause={handlePause}
         onSeekBack={handleSeekBack}
       />
-
-      {/* Current Time Display */}
-      <div className="text-center text-gray-600 text-sm bg-white rounded-lg p-3 shadow-sm border border-gray-200">
-        Current Time: {Math.floor(currentTime)}s
-        {player ? ' • Player Ready' : ' • Loading Player...'}
-      </div>
     </div>
   );
 };
