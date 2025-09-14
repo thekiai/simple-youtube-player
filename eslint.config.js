@@ -23,6 +23,10 @@ export default tseslint.config(
         "warn",
         { allowConstantExport: true },
       ],
+      // TypeScript strict type rules
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/prefer-as-const": "error",
     },
   }
 );
