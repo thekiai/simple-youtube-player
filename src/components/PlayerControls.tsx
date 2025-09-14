@@ -16,94 +16,93 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
 }) => {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
-      <div className="flex items-center justify-center space-x-4">
+      <div className="flex flex-col items-center justify-center space-y-4">
 
-        {/* -5 seconds button */}
-        <button
-          onClick={() => onSeekBack(-5)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go back 5 seconds"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">5s</span>
-          </div>
-        </button>
+        {/* 戻すボタン行 */}
+        <div className="flex items-center justify-center space-x-3">
+          <button
+            onClick={() => onSeekBack(-5)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go back 5 seconds"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white" />
+              <span className="text-xs text-white ml-1">5s</span>
+            </div>
+          </button>
 
-        {/* -2 seconds button */}
-        <button
-          onClick={() => onSeekBack(-2)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go back 2 seconds"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">2s</span>
-          </div>
-        </button>
+          <button
+            onClick={() => onSeekBack(-2)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go back 2 seconds"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white" />
+              <span className="text-xs text-white ml-1">2s</span>
+            </div>
+          </button>
 
-        {/* -1 second button */}
-        <button
-          onClick={() => onSeekBack(-1)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go back 1 second"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">1s</span>
-          </div>
-        </button>
-    
+          <button
+            onClick={() => onSeekBack(-1)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go back 1 second"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white" />
+              <span className="text-xs text-white ml-1">1s</span>
+            </div>
+          </button>
+        </div>
 
-        {/* Play/Pause button */}
-        <button
-          onClick={isPlaying ? onPause : onPlay}
-          className="flex items-center justify-center w-20 h-20 bg-blue-600 hover:bg-blue-500 rounded-full transition-colors active:scale-95"
-          aria-label={isPlaying ? 'Pause' : 'Play'}
-        >
-          {isPlaying ? (
-            <Pause className="w-8 h-8 text-white" fill="white" />
-          ) : (
-            <Play className="w-8 h-8 text-white" fill="white" />
-          )}
-        </button>
+        {/* 再生ボタン行 */}
+        <div className="flex items-center justify-center">
+          <button
+            onClick={isPlaying ? onPause : onPlay}
+            className="flex items-center justify-center w-20 h-20 bg-blue-600 hover:bg-blue-500 rounded-full transition-colors active:scale-95"
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+          >
+            {isPlaying ? (
+              <Pause className="w-8 h-8 text-white" fill="white" />
+            ) : (
+              <Play className="w-8 h-8 text-white" fill="white" />
+            )}
+          </button>
+        </div>
 
-            
-        {/* +1 second button */}
-        <button
-          onClick={() => onSeekBack(1)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go forward 1 second"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">1s</span>
-          </div>
-        </button>
+        {/* 送るボタン行 */}
+        <div className="flex items-center justify-center space-x-3">
 
-        {/* +2 seconds button */}
         <button
-          onClick={() => onSeekBack(2)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go forward 2 seconds"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">2s</span>
-          </div>
-        </button>
-
-        {/* +5 seconds button */}
-        <button
-          onClick={() => onSeekBack(5)}
-          className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-          aria-label="Go forward 5 seconds"
-        >
-          <div className="flex items-center">
-            <RotateCcw className="w-5 h-5 text-white" />
-            <span className="text-xs text-white ml-1">5s</span>
-          </div>
-        </button>
+            onClick={() => onSeekBack(5)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go forward 5 seconds"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white rotate-180" />
+              <span className="text-xs text-white ml-1">5s</span>
+            </div>
+          </button>
+          <button
+            onClick={() => onSeekBack(2)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go forward 2 seconds"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white rotate-180" />
+              <span className="text-xs text-white ml-1">2s</span>
+            </div>
+          </button>
+          <button
+            onClick={() => onSeekBack(1)}
+            className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
+            aria-label="Go forward 1 second"
+          >
+            <div className="flex items-center">
+              <RotateCcw className="w-5 h-5 text-white rotate-180" />
+              <span className="text-xs text-white ml-1">1s</span>
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
