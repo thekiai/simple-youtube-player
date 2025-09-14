@@ -3,6 +3,7 @@ export interface FavoriteVideo {
     id: string;
     videoId: string;
     title: string;
+    originalTitle: string; // オリジナルの動画タイトル
     thumbnailUrl: string;
     createdAt: Date;
 }
@@ -11,5 +12,6 @@ export interface FavoriteVideo {
 export interface CreateFavoriteVideo {
     videoId: string;
     title: string;
+    originalTitle: string; // オリジナルの動画タイトル
     thumbnailUrl: string;
 }

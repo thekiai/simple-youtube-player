@@ -93,9 +93,24 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
       }
     } else {
       // お気に入りに追加
+      let videoTitle = `動画 ${videoId}`; // デフォルトタイトル
+      
+      // YouTubeプレイヤーから実際のタイトルを取得
+      if (player) {
+        try {
+          const videoData = player.getVideoData();
+          if (videoData && videoData.title) {
+            videoTitle = videoData.title;
+          }
+        } catch (error) {
+          console.log('Failed to get video title:', error);
+        }
+      }
+      
       const videoData: CreateFavoriteVideo = {
         videoId,
-        title: `動画 ${videoId}`, // 実際のタイトルは後で取得可能
+        title: videoTitle,
+        originalTitle: videoTitle, // オリジナルタイトルも保存
         thumbnailUrl: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
       };
       addFavoriteVideo(videoData);
@@ -105,7 +120,7 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
     setTimeout(() => {
       setIsVideoSaved(false);
     }, 500);
-  }, [videoId, addFavoriteVideo, removeFavoriteVideo, isFavoriteVideo, favoriteVideos]);
+  }, [videoId, addFavoriteVideo, removeFavoriteVideo, isFavoriteVideo, favoriteVideos, player]);
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">

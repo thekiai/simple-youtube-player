@@ -14,10 +14,11 @@ export const useFavoriteVideos = () => {
                 const stored = localStorage.getItem(FAVORITE_VIDEOS_STORAGE_KEY);
                 if (stored) {
                     const parsed = JSON.parse(stored);
-                    // Dateオブジェクトを復元
+                    // Dateオブジェクトを復元し、originalTitleがない場合はtitleを設定
                     const videosWithDates = parsed.map((video: any) => ({
                         ...video,
-                        createdAt: new Date(video.createdAt)
+                        createdAt: new Date(video.createdAt),
+                        originalTitle: video.originalTitle || video.title // 互換性のため
                     }));
                     setFavoriteVideos(videosWithDates);
                 }
@@ -64,6 +65,14 @@ export const useFavoriteVideos = () => {
         saveFavoriteVideos(newVideos);
     };
 
+    // お気に入り動画のタイトルを更新
+    const updateFavoriteVideo = (id: string, updates: { title: string }) => {
+        const newVideos = favoriteVideos.map(video =>
+            video.id === id ? { ...video, ...updates } : video
+        );
+        saveFavoriteVideos(newVideos);
+    };
+
     // 動画IDでお気に入り動画を取得
     const getFavoriteVideoByVideoId = (videoId: string) => {
         return favoriteVideos.find(video => video.videoId === videoId);
@@ -78,6 +87,7 @@ export const useFavoriteVideos = () => {
         favoriteVideos,
         addFavoriteVideo,
         removeFavoriteVideo,
+        updateFavoriteVideo,
         getFavoriteVideoByVideoId,
         isFavoriteVideo
     };

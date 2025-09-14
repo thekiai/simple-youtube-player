@@ -6,6 +6,7 @@ interface YouTubePlayerInstance {
     getCurrentTime: () => number;
     seekTo: (seconds: number, allowSeekAhead: boolean) => void;
     getPlayerState: () => number;
+    getVideoData: () => { title: string; video_id: string; author: string };
     destroy?: () => void;
 }
 
