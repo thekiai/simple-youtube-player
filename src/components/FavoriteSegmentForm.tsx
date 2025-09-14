@@ -179,7 +179,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                         ) : (
                           // 表示モード
                           <h4 className="text-xs font-medium text-gray-700 truncate">
-                            {favorite.name || `区間 ${formatTime(favorite.startTime)}`}
+                            {favorite.name || formatTime(favorite.startTime)}
                           </h4>
                         )}
                         <div className="text-xs text-gray-400">
