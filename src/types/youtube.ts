@@ -2,21 +2,8 @@ export interface YouTubePlayer {
     playVideo: () => void;
     pauseVideo: () => void;
     getCurrentTime: () => number;
-    seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
+    seekTo: (seconds: number, allowSeekAhead: boolean) => void;
     getPlayerState: () => number;
-}
-
-export interface Caption {
-    start: number;
-    duration: number;
-    text: string;
-}
-
-export interface CaptionTrack {
-    id: string;
-    name: string;
-    languageCode: string;
-    url: string;
 }
 
 declare global {

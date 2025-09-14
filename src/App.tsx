@@ -1,8 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { VideoPlayer } from './components/VideoPlayer';
-import { CaptionDisplay } from './components/CaptionDisplay';
 import { PlayerControls } from './components/PlayerControls';
-import { useCaptions } from './hooks/useCaptions';
 import { extractVideoId } from './utils/youtube';
 import { YouTubePlayer } from './types/youtube';
 
@@ -12,8 +10,6 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [player, setPlayer] = useState<YouTubePlayer | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  const { captions, loading, error } = useCaptions(videoId);
 
   const handleVideoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,9 +28,11 @@ function App() {
     setCurrentTime(time);
   }, []);
 
-  const handlePlayerReady = useCallback((playerInstance: YouTubePlayer) => {
-    setPlayer(playerInstance);
-    console.log('Player ready in App component');
+  const handlePlayerReady = useCallback((playerInstance: YouTubePlayer | null) => {
+    if (playerInstance) {
+      setPlayer(playerInstance);
+      console.log('Player ready in App component');
+    }
   }, []);
 
   const handlePlay = () => {
@@ -64,7 +62,7 @@ function App() {
       <div className="bg-gray-800 shadow-lg">
         <div className="max-w-md mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold text-center mb-4">
-            🇰🇷 Korean Learning Player
+            🎬 YouTube Player
           </h1>
           
           {/* Video URL Input */}
@@ -97,14 +95,6 @@ function App() {
               onPlayerReady={handlePlayerReady}
             />
 
-            {/* Caption Display */}
-            <CaptionDisplay
-              captions={captions}
-              currentTime={currentTime}
-              loading={loading}
-              error={error}
-            />
-
             {/* Player Controls */}
             <PlayerControls
               isPlaying={isPlaying}
@@ -123,14 +113,14 @@ function App() {
 
         {!videoId && (
           <div className="text-center text-gray-400 py-12">
-            <p className="mb-4">Enter a YouTube URL above to start learning!</p>
+            <p className="mb-4">Enter a YouTube URL above to start watching!</p>
             <p className="text-sm">
-              This player will help you learn Korean with synchronized subtitles and easy rewind controls.
+              Simple YouTube player with easy rewind controls.
             </p>
             <div className="mt-6 p-4 bg-gray-800 rounded-lg text-left">
-              <h4 className="font-semibold mb-2">📝 Try these Korean learning videos:</h4>
+              <h4 className="font-semibold mb-2">📝 Try these video formats:</h4>
               <div className="text-xs space-y-1">
-                <div>• dQw4w9WgXcQ (Sample video ID)</div>
+                <div>• dQw4w9WgXcQ (Video ID)</div>
                 <div>• https://youtu.be/dQw4w9WgXcQ</div>
                 <div>• https://youtube.com/watch?v=dQw4w9WgXcQ</div>
               </div>
@@ -142,15 +132,15 @@ function App() {
       {/* Instructions */}
       <div className="max-w-md mx-auto px-4 pb-8">
         <div className="bg-gray-800 rounded-lg p-4">
-          <h3 className="font-semibold mb-2">📋 Setup Instructions:</h3>
-          <ol className="text-sm text-gray-300 space-y-1 list-decimal list-inside">
-            <li>Get YouTube Data API key from Google Cloud Console</li>
-            <li>Enable YouTube Data API v3 for your project</li>
-            <li>Add your API key to the .env file</li>
-            <li>Restart the development server</li>
-          </ol>
+          <h3 className="font-semibold mb-2">📋 Features:</h3>
+          <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
+            <li>Simple YouTube video playback</li>
+            <li>Easy rewind controls (-10s, -5s)</li>
+            <li>Play/Pause functionality</li>
+            <li>Current time display</li>
+          </ul>
           <div className="mt-3 p-2 bg-gray-700 rounded text-xs">
-            <strong>Note:</strong> If you see connection errors, try using a different video or check your internet connection.
+            <strong>Note:</strong> No API keys or authentication required. Just paste any YouTube URL and start watching!
           </div>
         </div>
       </div>
