@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { extractVideoId } from '../utils/youtube';
+import { useFavoriteVideos } from '../hooks/useFavoriteVideos';
 
 export const HomePage: React.FC = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const navigate = useNavigate();
+  const { favoriteVideos, removeFavoriteVideo } = useFavoriteVideos();
 
   const handleVideoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,6 +16,14 @@ export const HomePage: React.FC = () => {
     } else {
       alert('Please enter a valid YouTube URL or video ID');
     }
+  };
+
+  const handleFavoriteVideoClick = (videoId: string) => {
+    navigate(`/video/${videoId}`);
+  };
+
+  const handleRemoveFavorite = (id: string) => {
+    removeFavoriteVideo(id);
   };
 
   return (
@@ -46,6 +56,48 @@ export const HomePage: React.FC = () => {
 
       {/* Main Content */}
       <div className="max-w-md mx-auto px-4 py-6">
+        {/* Favorite Videos */}
+        {favoriteVideos.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">お気に入り動画</h2>
+            <div className="space-y-2">
+              {favoriteVideos.map((video) => (
+                <div
+                  key={video.id}
+                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-pointer"
+                  onClick={() => handleFavoriteVideoClick(video.videoId)}
+                >
+                  <div className="flex items-center space-x-3">
+                    <img
+                      src={video.thumbnailUrl}
+                      alt={video.title}
+                      className="w-16 h-12 rounded object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-medium text-gray-900 truncate">
+                        {video.title}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        保存日: {video.createdAt.toLocaleDateString('ja-JP')}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveFavorite(video.id);
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm"
+                      title="削除"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="text-center text-gray-600 py-12">
           <p className="mb-4">Enter a YouTube URL above to start watching!</p>
           <p className="text-sm">
