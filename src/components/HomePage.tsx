@@ -22,7 +22,7 @@ export const HomePage: React.FC = () => {
       <div className="bg-white shadow-lg border-b border-gray-200">
         <div className="max-w-md mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold text-center mb-4 text-gray-800">
-            🎬 YouTube Player
+            Simple YouTube Player
           </h1>
           
           {/* Video URL Input */}

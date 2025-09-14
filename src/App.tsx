@@ -31,7 +31,7 @@ function VideoPlayerRoute() {
             >
               ← Back
             </button>
-            <h1 className="text-xl font-bold text-gray-800">🎬 YouTube Player</h1>
+            <h1 className="text-xl font-bold text-gray-800">Simple YouTube Player</h1>
             <div className="w-20"></div> {/* Spacer for centering */}
           </div>
         </div>
