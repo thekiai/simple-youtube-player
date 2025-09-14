@@ -32,11 +32,11 @@ export const HomePage: React.FC = () => {
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
               placeholder="Enter YouTube URL or Video ID"
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
             />
             <button
               type="submit"
-              className="w-full py-3 bg-blue-500 hover:bg-blue-600 rounded-lg font-medium transition-colors active:scale-98 text-white"
+              className="w-full py-3 bg-gray-500 hover:bg-gray-600 rounded-lg font-medium transition-colors active:scale-98 text-white"
             >
               Load Video
             </button>

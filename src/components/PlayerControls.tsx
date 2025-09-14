@@ -58,7 +58,7 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
         <div className="flex flex-col items-center justify-center">
           <button
             onClick={isPlaying ? onPause : onPlay}
-            className="flex items-center justify-center w-20 h-20 bg-blue-500 hover:bg-blue-600 rounded-full transition-colors active:scale-95 shadow-lg"
+            className="flex items-center justify-center w-20 h-20 bg-gray-500 hover:bg-gray-600 rounded-full transition-colors active:scale-95 shadow-lg"
             aria-label={isPlaying ? 'Pause' : 'Play'}
           >
             {isPlaying ? (
