@@ -62,7 +62,7 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
       />
 
       {/* Current Time Display */}
-      <div className="text-center text-gray-400 text-sm">
+      <div className="text-center text-gray-600 text-sm bg-white rounded-lg p-3 shadow-sm border border-gray-200">
         Current Time: {Math.floor(currentTime)}s
         {player ? ' • Player Ready' : ' • Loading Player...'}
       </div>

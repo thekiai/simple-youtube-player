@@ -20,18 +20,18 @@ function VideoPlayerRoute() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header with back button */}
-      <div className="bg-gray-800 shadow-lg">
+      <div className="bg-white shadow-lg border-b border-gray-200">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => window.history.back()}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm transition-colors"
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-lg text-gray-700 text-sm transition-colors"
             >
               ← Back
             </button>
-            <h1 className="text-xl font-bold">🎬 YouTube Player</h1>
+            <h1 className="text-xl font-bold text-gray-800">🎬 YouTube Player</h1>
             <div className="w-20"></div> {/* Spacer for centering */}
           </div>
         </div>
