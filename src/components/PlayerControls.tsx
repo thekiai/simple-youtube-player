@@ -16,18 +16,18 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
 }) => {
   return (
     <div className="bg-gray-800 rounded-lg p-6">
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex items-center justify-center space-x-4">
 
-        {/* 戻すボタン行 */}
-        <div className="flex items-center justify-center space-x-3">
+        {/* 戻すボタン列 */}
+        <div className="flex flex-col items-center justify-center space-y-3">
           <button
-            onClick={() => onSeekBack(-5)}
+            onClick={() => onSeekBack(-1)}
             className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-            aria-label="Go back 5 seconds"
+            aria-label="Go back 1 second"
           >
             <div className="flex items-center">
               <RotateCcw className="w-5 h-5 text-white" />
-              <span className="text-xs text-white ml-1">5s</span>
+              <span className="text-xs text-white ml-1">1s</span>
             </div>
           </button>
 
@@ -43,19 +43,19 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           </button>
 
           <button
-            onClick={() => onSeekBack(-1)}
+            onClick={() => onSeekBack(-5)}
             className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-            aria-label="Go back 1 second"
+            aria-label="Go back 5 seconds"
           >
             <div className="flex items-center">
               <RotateCcw className="w-5 h-5 text-white" />
-              <span className="text-xs text-white ml-1">1s</span>
+              <span className="text-xs text-white ml-1">5s</span>
             </div>
           </button>
         </div>
 
-        {/* 再生ボタン行 */}
-        <div className="flex items-center justify-center">
+        {/* 再生ボタン列 */}
+        <div className="flex flex-col items-center justify-center">
           <button
             onClick={isPlaying ? onPause : onPlay}
             className="flex items-center justify-center w-20 h-20 bg-blue-600 hover:bg-blue-500 rounded-full transition-colors active:scale-95"
@@ -69,19 +69,19 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
           </button>
         </div>
 
-        {/* 送るボタン行 */}
-        <div className="flex items-center justify-center space-x-3">
-
-        <button
-            onClick={() => onSeekBack(5)}
+        {/* 送るボタン列 */}
+        <div className="flex flex-col items-center justify-center space-y-3">
+          <button
+            onClick={() => onSeekBack(1)}
             className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-            aria-label="Go forward 5 seconds"
+            aria-label="Go forward 1 second"
           >
             <div className="flex items-center">
               <RotateCcw className="w-5 h-5 text-white rotate-180" />
-              <span className="text-xs text-white ml-1">5s</span>
+              <span className="text-xs text-white ml-1">1s</span>
             </div>
           </button>
+
           <button
             onClick={() => onSeekBack(2)}
             className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
@@ -92,14 +92,15 @@ export const PlayerControls: React.FC<PlayerControlsProps> = ({
               <span className="text-xs text-white ml-1">2s</span>
             </div>
           </button>
+
           <button
-            onClick={() => onSeekBack(1)}
+            onClick={() => onSeekBack(5)}
             className="flex items-center justify-center w-16 h-16 bg-gray-700 hover:bg-gray-600 rounded-full transition-colors active:scale-95"
-            aria-label="Go forward 1 second"
+            aria-label="Go forward 5 seconds"
           >
             <div className="flex items-center">
               <RotateCcw className="w-5 h-5 text-white rotate-180" />
-              <span className="text-xs text-white ml-1">1s</span>
+              <span className="text-xs text-white ml-1">5s</span>
             </div>
           </button>
         </div>
