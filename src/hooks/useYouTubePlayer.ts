@@ -1,8 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { YouTubePlayer } from '../types/youtube';
+
+interface YouTubePlayerInstance {
+    playVideo: () => void;
+    pauseVideo: () => void;
+    getCurrentTime: () => number;
+    seekTo: (seconds: number, allowSeekAhead: boolean) => void;
+    getPlayerState: () => number;
+    destroy?: () => void;
+}
 
 export const useYouTubePlayer = (videoId: string) => {
-    const [player, setPlayer] = useState<YouTubePlayer | null>(null);
+    const [player, setPlayer] = useState<YouTubePlayerInstance | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [isReady, setIsReady] = useState(false);
@@ -35,7 +43,7 @@ export const useYouTubePlayer = (videoId: string) => {
                 }
             }
 
-            const newPlayer = new window.YT.Player(playerRef.current, {
+            new window.YT.Player(playerRef.current, {
                 height: '315',
                 width: '100%',
                 videoId: videoId,

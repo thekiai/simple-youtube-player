@@ -1,5 +1,10 @@
 import React from 'react';
-import { Caption } from '../types/youtube';
+
+interface Caption {
+  start: number;
+  duration: number;
+  text: string;
+}
 
 interface CaptionDisplayProps {
   captions: Caption[];

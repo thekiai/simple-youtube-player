@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Caption, CaptionTrack } from '../types/youtube';
+interface Caption {
+    start: number;
+    duration: number;
+    text: string;
+}
 
 export const useCaptions = (videoId: string) => {
     const [captions, setCaptions] = useState<Caption[]>([]);
