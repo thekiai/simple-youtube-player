@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Plus, Check, Play, Trash2, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Heart, Plus, Check, Play, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { CreateFavoriteSegment, FavoriteSegment } from '../types/favorite';
 
 interface FavoriteSegmentFormProps {
@@ -144,8 +144,12 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                         </button>
                       )}
                       
-                      {/* 名前と時間の情報 */}
-                      <div className="flex-1 min-w-0">
+                      {/* 名前と時間の情報（クリックで再生） */}
+                      <div 
+                        className="flex-1 min-w-0 cursor-pointer hover:bg-gray-50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors"
+                        onClick={() => onPlaySegment(favorite)}
+                        title="クリックして再生"
+                      >
                         {editingId === favorite.id ? (
                           // 編集モード
                           <div className="flex items-center space-x-1">
@@ -173,16 +177,10 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                             </button>
                           </div>
                         ) : (
-                          // 表示モード - クリックで編集
-                          <div 
-                            onClick={() => startEditing(favorite)}
-                            className="cursor-pointer hover:bg-gray-50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors"
-                            title="クリックして名前を編集"
-                          >
-                            <h4 className="text-xs font-medium text-gray-700 truncate">
-                              {favorite.name || formatTime(favorite.startTime)}
-                            </h4>
-                          </div>
+                          // 表示モード
+                          <h4 className="text-xs font-medium text-gray-700 truncate">
+                            {favorite.name || `区間 ${formatTime(favorite.startTime)}`}
+                          </h4>
                         )}
                         <div className="text-xs text-gray-400">
                           <span>
@@ -191,15 +189,22 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                         </div>
                       </div>
                       
-                      {/* 削除ボタン（右側） */}
+                      {/* 削除・編集ボタン（右側） */}
                       {editingId !== favorite.id && (
-                        <div className="flex items-center ml-2">
+                        <div className="flex items-center space-x-1 ml-2">
                           <button
                             onClick={() => onDeleteSegment(favorite.id)}
                             className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
                             title="削除"
                           >
                             <Trash2 className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => startEditing(favorite)}
+                            className="flex items-center justify-center w-6 h-6 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded transition-colors"
+                            title="名前を編集"
+                          >
+                            <Edit2 className="w-3 h-3" />
                           </button>
                         </div>
                       )}
