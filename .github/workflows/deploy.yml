@@ -31,7 +31,14 @@ jobs:
         run: npm ci
       
       - name: Build
-        run: npm run build
+        run: |
+          echo "Building with NODE_ENV=$NODE_ENV"
+          NODE_ENV=production npm run build
+          echo "Build completed. Checking dist folder:"
+          ls -la dist/
+          ls -la dist/assets/
+          echo "Checking index.html content:"
+          cat dist/index.html
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
