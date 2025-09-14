@@ -33,12 +33,28 @@ jobs:
       - name: Build
         run: |
           echo "Building with NODE_ENV=$NODE_ENV"
+          echo "Current directory: $(pwd)"
+          echo "Node version: $(node --version)"
+          echo "NPM version: $(npm --version)"
+          echo "Vite version: $(npx vite --version)"
           NODE_ENV=production npm run build
           echo "Build completed. Checking dist folder:"
           ls -la dist/
           ls -la dist/assets/
+          echo "File sizes:"
+          du -h dist/assets/*
           echo "Checking index.html content:"
           cat dist/index.html
+          echo "Checking if JS file exists and is readable:"
+          if [ -f "dist/assets/index-*.js" ]; then
+            echo "JS file found:"
+            ls -la dist/assets/index-*.js
+            echo "First 100 characters of JS file:"
+            head -c 100 dist/assets/index-*.js
+          else
+            echo "ERROR: No JS file found!"
+            find dist/ -name "*.js" -type f
+          fi
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
