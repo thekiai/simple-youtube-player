@@ -8,9 +8,12 @@ const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Root element not found');
 }
+// ベースパスを動的に決定（Viteのbase設定と一致させる）
+const basename = import.meta.env.BASE_URL === '/' ? '' : import.meta.env.BASE_URL.slice(0, -1);
+
 createRoot(rootElement).render(
     <StrictMode>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </StrictMode>

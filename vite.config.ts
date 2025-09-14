@@ -11,8 +11,13 @@ export default defineConfig(({ mode }) => ({
         host: true,
         port: 3000
     },
-    base: mode === 'production' ? '/simple-youtube-player/' : './',
+    base: mode === 'production' ? '/simple-youtube-player/' : '/',
     build: {
         outDir: 'dist',
+        assetsDir: 'assets'
+    },
+    preview: {
+        port: 4173,
+        host: true
     }
 }));
