@@ -14,8 +14,6 @@ export default defineConfig(({ mode }) => ({
     base: mode === 'production' ? '/simple-youtube-player/' : '/',
     build: {
         outDir: 'dist',
-        assetsDir: 'assets',
-        minify: false
     },
     preview: {
         port: 4173,
