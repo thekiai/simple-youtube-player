@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, Plus, Check, Play, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Heart, Plus, Check, Play, Pause, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { CreateFavoriteSegment, FavoriteSegment } from '../types/favorite';
 
 interface FavoriteSegmentFormProps {
@@ -25,6 +25,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
 
   // お気に入りを即座に追加
   const handleQuickRegister = () => {
@@ -81,6 +82,46 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   // 開始秒数でソート
   const sortedFavorites = [...favorites].sort((a, b) => a.startTime - b.startTime);
 
+  // 現在秒数がお気に入り秒数の範囲内かどうかを判定
+  const isInFavoriteRange = (startTime: number, index: number) => {
+    // 現在秒数がこのお気に入り秒数に到達しているか
+    const hasReachedThisTime = currentTime >= startTime;
+    
+    // 次のお気に入り秒数を取得（なければ最後まで）
+    const nextFavorite = sortedFavorites[index + 1];
+    const hasNotReachedNextTime = !nextFavorite || currentTime < nextFavorite.startTime;
+    
+    return hasReachedThisTime && hasNotReachedNextTime;
+  };
+
+  // お気に入りが現在再生中かどうかを判定
+  const isCurrentlyPlaying = (favoriteId: string, startTime: number, index: number) => {
+    // クリックされたアイテムの場合は優先
+    if (currentlyPlayingId === favoriteId) {
+      return true;
+    }
+    // クリックされたアイテムがない場合のみ範囲判定を使用
+    if (currentlyPlayingId === null) {
+      return isInFavoriteRange(startTime, index);
+    }
+    // 他のアイテムがクリックされている場合はfalse
+    return false;
+  };
+
+  // 再生ボタンのクリックハンドラー
+  const handlePlayClick = (favorite: FavoriteSegment) => {
+    // 即座にアイコンを変更
+    setCurrentlyPlayingId(favorite.id);
+    
+    // 実際の再生処理
+    onPlaySegment(favorite);
+    
+    // 少し遅れて状態をリセット（実際の再生が開始された後）
+    setTimeout(() => {
+      setCurrentlyPlayingId(null);
+    }, 1000);
+  };
+
   return (
     <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
       {/* 登録ボタン */}
@@ -130,24 +171,28 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
           {isOpen && (
             <div className="mt-2">
               <div className="max-h-60 overflow-y-auto space-y-1 pr-2">
-                {sortedFavorites.map((favorite) => (
-                  <div key={favorite.id} className="p-2 hover:bg-gray-50 transition-colors rounded">
+                {sortedFavorites.map((favorite, index) => (
+                  <div key={favorite.id} className={`p-2 hover:bg-gray-50 transition-colors rounded ${isCurrentlyPlaying(favorite.id, favorite.startTime, index) ? 'bg-gray-50' : ''}`}>
                     <div className="flex items-center">
                       {/* 再生ボタン（一番左） */}
                       {editingId !== favorite.id && (
                         <button
-                          onClick={() => onPlaySegment(favorite)}
+                          onClick={() => handlePlayClick(favorite)}
                           className="flex items-center justify-center w-6 h-6 bg-green-50 hover:bg-green-100 text-green-600 rounded transition-colors mr-2"
-                          title="この区間を再生"
+                          title={isCurrentlyPlaying(favorite.id, favorite.startTime, index) ? "現在再生中" : "この区間を再生"}
                         >
-                          <Play className="w-3 h-3" />
+                          {isCurrentlyPlaying(favorite.id, favorite.startTime, index) ? (
+                            <Pause className="w-3 h-3" />
+                          ) : (
+                            <Play className="w-3 h-3" />
+                          )}
                         </button>
                       )}
                       
                       {/* 名前と時間の情報（クリックで再生） */}
                       <div 
                         className="flex-1 min-w-0 cursor-pointer hover:bg-gray-50 rounded px-1 py-0.5 -mx-1 -my-0.5 transition-colors"
-                        onClick={() => onPlaySegment(favorite)}
+                        onClick={() => handlePlayClick(favorite)}
                         title="クリックして再生"
                       >
                         {editingId === favorite.id ? (
