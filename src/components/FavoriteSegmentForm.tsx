@@ -170,7 +170,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
           {/* アコーディオンコンテンツ */}
           {isOpen && (
             <div className="mt-2">
-              <div className="max-h-60 overflow-y-auto space-y-1 pr-2">
+              <div className="max-h-32 overflow-y-auto space-y-1 pr-2">
                 {sortedFavorites.map((favorite, index) => (
                   <div key={favorite.id} className={`p-2 hover:bg-gray-50 transition-colors rounded ${isCurrentlyPlaying(favorite.id, favorite.startTime, index) ? 'bg-gray-50' : ''}`}>
                     <div className="flex items-center">
