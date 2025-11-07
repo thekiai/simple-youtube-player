@@ -238,18 +238,18 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                       {editingId !== favorite.id && (
                         <div className="flex items-center space-x-1 ml-2">
                           <button
-                            onClick={() => onDeleteSegment(favorite.id)}
-                            className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                            title="削除"
-                          >
-                            <Trash2 className="w-3 h-3" />
-                          </button>
-                          <button
                             onClick={() => startEditing(favorite)}
                             className="flex items-center justify-center w-6 h-6 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded transition-colors"
                             title="名前を編集"
                           >
                             <Edit2 className="w-3 h-3" />
+                          </button>
+                          <button
+                            onClick={() => onDeleteSegment(favorite.id)}
+                            className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+                            title="削除"
+                          >
+                            <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
                       )}

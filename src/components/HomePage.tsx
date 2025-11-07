@@ -156,22 +156,22 @@ export const HomePage: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleRemoveFavorite(video.id);
-                          }}
-                          className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
-                          title="削除"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
                             startEditing(video);
                           }}
                           className="flex items-center justify-center w-6 h-6 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded transition-colors"
                           title="タイトルを編集"
                         >
                           <Edit2 className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveFavorite(video.id);
+                          }}
+                          className="flex items-center justify-center w-6 h-6 bg-red-50 hover:bg-red-100 text-red-600 rounded transition-colors"
+                          title="削除"
+                        >
+                          <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
                     )}
