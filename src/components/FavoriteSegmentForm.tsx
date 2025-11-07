@@ -203,6 +203,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
                               value={editingName}
                               onChange={(e) => setEditingName(e.target.value)}
                               onKeyDown={handleKeyPress}
+                              onBlur={saveEditing}
                               className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-transparent"
                               autoFocus
                             />
