@@ -49,12 +49,21 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
     }
   }, []);
 
-  // リサイズ開始
+  // リサイズ開始（マウス）
   const handleResizeStart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsResizing(true);
     resizeStartY.current = e.clientY;
+    resizeStartHeight.current = listHeight;
+  };
+
+  // リサイズ開始（タッチ）
+  const handleResizeStartTouch = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    resizeStartY.current = e.touches[0].clientY;
     resizeStartHeight.current = listHeight;
   };
 
@@ -85,12 +94,34 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
       localStorage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight.toString());
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const deltaY = e.touches[0].clientY - resizeStartY.current;
+      const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
+      setListHeight(newHeight);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      e.preventDefault();
+      setIsResizing(false);
+      // 最終的な高さを計算して保存
+      if (e.changedTouches.length > 0) {
+        const deltaY = e.changedTouches[0].clientY - resizeStartY.current;
+        const finalHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
+        localStorage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight.toString());
+      }
+    };
+
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleTouchEnd, { passive: false });
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
       document.body.style.userSelect = '';
       document.body.style.cursor = '';
     };
@@ -339,7 +370,8 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
       {favorites.length > 0 && isOpen && (
         <div
           onMouseDown={handleResizeStart}
-          className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-12 h-4 cursor-ns-resize flex items-center justify-center ${
+          onTouchStart={handleResizeStartTouch}
+          className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-12 h-4 cursor-ns-resize flex items-center justify-center touch-none ${
             isResizing ? 'opacity-100' : 'opacity-60 hover:opacity-100'
           } transition-opacity z-10`}
           title="ドラッグしてサイズを変更"
