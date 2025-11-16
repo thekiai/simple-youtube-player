@@ -9,7 +9,7 @@ export default defineConfig(({ mode }) => ({
     },
     server: {
         host: true,
-        port: 3000
+        port: 3001
     },
     base: mode === 'production' ? '/simple-youtube-player/' : '/',
     build: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Plus, Check, Play, Pause, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { CreateFavoriteSegment, FavoriteSegment } from '../types/favorite';
 
@@ -11,6 +11,11 @@ interface FavoriteSegmentFormProps {
   onDeleteSegment: (id: string) => void;
   onUpdateSegment: (id: string, updates: { name: string }) => void;
 }
+
+const FAVORITE_AREA_HEIGHT_STORAGE_KEY = 'favorite-area-height';
+const DEFAULT_HEIGHT = 128; // max-h-32 = 128px
+const MIN_HEIGHT = 80;
+const MAX_HEIGHT = 400;
 
 export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   videoId,
@@ -26,6 +31,70 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
+  const [listHeight, setListHeight] = useState(DEFAULT_HEIGHT);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartY = useRef(0);
+  const resizeStartHeight = useRef(DEFAULT_HEIGHT);
+  const listContainerRef = useRef<HTMLDivElement>(null);
+
+  // localStorageから高さを読み込み
+  useEffect(() => {
+    const savedHeight = localStorage.getItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY);
+    if (savedHeight) {
+      const height = parseInt(savedHeight, 10);
+      if (height >= MIN_HEIGHT && height <= MAX_HEIGHT) {
+        setListHeight(height);
+        resizeStartHeight.current = height;
+      }
+    }
+  }, []);
+
+  // リサイズ開始
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    resizeStartY.current = e.clientY;
+    resizeStartHeight.current = listHeight;
+  };
+
+  // リサイズ中
+  useEffect(() => {
+    if (isResizing) {
+      // リサイズ中はテキスト選択を無効化
+      document.body.style.userSelect = 'none';
+      document.body.style.cursor = 'ns-resize';
+    } else {
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    }
+
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = e.clientY - resizeStartY.current;
+      const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
+      setListHeight(newHeight);
+    };
+
+    const handleMouseUp = (e: MouseEvent) => {
+      setIsResizing(false);
+      // 最終的な高さを計算して保存
+      const deltaY = e.clientY - resizeStartY.current;
+      const finalHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
+      localStorage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight.toString());
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+    };
+  }, [isResizing]);
 
   // お気に入りを即座に追加
   const handleQuickRegister = () => {
@@ -123,7 +192,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200">
+    <div className="bg-white rounded-lg p-3 shadow-sm border border-gray-200 relative">
       {/* 登録ボタン */}
       <button
         onClick={handleQuickRegister}
@@ -169,8 +238,12 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
           
           {/* アコーディオンコンテンツ */}
           {isOpen && (
-            <div className="mt-2">
-              <div className="max-h-32 overflow-y-auto space-y-1 pr-2">
+            <div className="mt-2 relative">
+              <div 
+                ref={listContainerRef}
+                className="overflow-y-auto space-y-1 pr-2"
+                style={{ height: `${listHeight}px` }}
+              >
                 {sortedFavorites.map((favorite, index) => (
                   <div key={favorite.id} className={`p-2 hover:bg-gray-50 transition-colors rounded ${isCurrentlyPlaying(favorite.id, favorite.startTime, index) ? 'bg-gray-50' : ''}`}>
                     <div className="flex items-center">
@@ -260,6 +333,21 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
               </div>
             </div>
           )}
+        </div>
+      )}
+      {/* リサイズハンドル（枠内） */}
+      {favorites.length > 0 && isOpen && (
+        <div
+          onMouseDown={handleResizeStart}
+          className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-12 h-4 cursor-ns-resize flex items-center justify-center ${
+            isResizing ? 'opacity-100' : 'opacity-60 hover:opacity-100'
+          } transition-opacity z-10`}
+          title="ドラッグしてサイズを変更"
+        >
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="w-6 h-0.5 bg-gray-400 rounded-full"></div>
+            <div className="w-6 h-0.5 bg-gray-400 rounded-full"></div>
+          </div>
         </div>
       )}
     </div>
