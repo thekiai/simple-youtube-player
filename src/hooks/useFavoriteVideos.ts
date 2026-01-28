@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { FavoriteVideo, CreateFavoriteVideo } from '../types/favoriteVideo';
+import { storage } from '../db/storage';
 
-// LocalStorageのキー
+// IndexedDBのキー
 const FAVORITE_VIDEOS_STORAGE_KEY = 'youtube-player-favorite-videos';
 
 export const useFavoriteVideos = () => {
     const [favoriteVideos, setFavoriteVideos] = useState<FavoriteVideo[]>([]);
 
-    // LocalStorageからお気に入り動画を読み込み
+    // IndexedDBからお気に入り動画を読み込み
     useEffect(() => {
-        const loadFavoriteVideos = () => {
+        const loadFavoriteVideos = async () => {
             try {
-                const stored = localStorage.getItem(FAVORITE_VIDEOS_STORAGE_KEY);
+                const stored = await storage.getItem<FavoriteVideo[]>(FAVORITE_VIDEOS_STORAGE_KEY);
                 if (stored) {
-                    const parsed = JSON.parse(stored);
                     // Dateオブジェクトを復元し、originalTitleがない場合はtitleを設定
-                    const videosWithDates = parsed.map((video: any) => ({
+                    const videosWithDates = stored.map((video: any) => ({
                         ...video,
                         createdAt: new Date(video.createdAt),
                         originalTitle: video.originalTitle || video.title // 互換性のため
@@ -23,21 +23,17 @@ export const useFavoriteVideos = () => {
                     setFavoriteVideos(videosWithDates);
                 }
             } catch (error) {
-                console.error('Failed to load favorite videos from localStorage:', error);
+                console.error('Failed to load favorite videos from IndexedDB:', error);
             }
         };
 
         loadFavoriteVideos();
     }, []);
 
-    // LocalStorageにお気に入り動画を保存
+    // IndexedDBにお気に入り動画を保存
     const saveFavoriteVideos = (newVideos: FavoriteVideo[]) => {
-        try {
-            localStorage.setItem(FAVORITE_VIDEOS_STORAGE_KEY, JSON.stringify(newVideos));
-            setFavoriteVideos(newVideos);
-        } catch (error) {
-            console.error('Failed to save favorite videos to localStorage:', error);
-        }
+        storage.setItem(FAVORITE_VIDEOS_STORAGE_KEY, newVideos);
+        setFavoriteVideos(newVideos);
     };
 
     // お気に入り動画を追加

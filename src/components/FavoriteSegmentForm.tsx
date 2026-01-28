@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Plus, Check, Play, Pause, Trash2, Edit2, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { CreateFavoriteSegment, FavoriteSegment } from '../types/favorite';
+import { storage } from '../db/storage';
 
 interface FavoriteSegmentFormProps {
   videoId: string;
@@ -37,16 +38,19 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
   const resizeStartHeight = useRef(DEFAULT_HEIGHT);
   const listContainerRef = useRef<HTMLDivElement>(null);
 
-  // localStorageから高さを読み込み
+  // IndexedDBから高さを読み込み
   useEffect(() => {
-    const savedHeight = localStorage.getItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY);
-    if (savedHeight) {
-      const height = parseInt(savedHeight, 10);
-      if (height >= MIN_HEIGHT && height <= MAX_HEIGHT) {
-        setListHeight(height);
-        resizeStartHeight.current = height;
+    const loadHeight = async () => {
+      const savedHeight = await storage.getItem<string | number>(FAVORITE_AREA_HEIGHT_STORAGE_KEY);
+      if (savedHeight !== null) {
+        const height = typeof savedHeight === 'number' ? savedHeight : parseInt(savedHeight, 10);
+        if (height >= MIN_HEIGHT && height <= MAX_HEIGHT) {
+          setListHeight(height);
+          resizeStartHeight.current = height;
+        }
       }
-    }
+    };
+    loadHeight();
   }, []);
 
   // リサイズ開始（マウス）
@@ -91,7 +95,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
       // 最終的な高さを計算して保存
       const deltaY = e.clientY - resizeStartY.current;
       const finalHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
-      localStorage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight.toString());
+      storage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -108,7 +112,7 @@ export const FavoriteSegmentForm: React.FC<FavoriteSegmentFormProps> = ({
       if (e.changedTouches.length > 0) {
         const deltaY = e.changedTouches[0].clientY - resizeStartY.current;
         const finalHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, resizeStartHeight.current + deltaY));
-        localStorage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight.toString());
+        storage.setItem(FAVORITE_AREA_HEIGHT_STORAGE_KEY, finalHeight);
       }
     };
 

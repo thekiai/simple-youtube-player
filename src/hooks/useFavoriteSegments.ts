@@ -1,42 +1,38 @@
 import { useState, useEffect } from 'react';
 import { FavoriteSegment, CreateFavoriteSegment } from '../types/favorite';
+import { storage } from '../db/storage';
 
-// LocalStorageのキー
+// IndexedDBのキー
 const FAVORITES_STORAGE_KEY = 'youtube-player-favorites';
 
 export const useFavoriteSegments = () => {
     const [favorites, setFavorites] = useState<FavoriteSegment[]>([]);
 
-    // LocalStorageからお気に入りを読み込み
+    // IndexedDBからお気に入りを読み込み
     useEffect(() => {
-        const loadFavorites = () => {
+        const loadFavorites = async () => {
             try {
-                const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+                const stored = await storage.getItem<FavoriteSegment[]>(FAVORITES_STORAGE_KEY);
                 if (stored) {
-                    const parsed = JSON.parse(stored);
                     // Dateオブジェクトを復元
-                    const favoritesWithDates = parsed.map((fav: any) => ({
+                    const favoritesWithDates = stored.map((fav: any) => ({
                         ...fav,
                         createdAt: new Date(fav.createdAt)
                     }));
                     setFavorites(favoritesWithDates);
                 }
             } catch (error) {
-                console.error('Failed to load favorites from localStorage:', error);
+                console.error('Failed to load favorites from IndexedDB:', error);
             }
         };
 
         loadFavorites();
     }, []);
 
-    // LocalStorageにお気に入りを保存
+    // IndexedDBにお気に入りを保存
     const saveFavorites = (newFavorites: FavoriteSegment[]) => {
-        try {
-            localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(newFavorites));
-            setFavorites(newFavorites);
-        } catch (error) {
-            console.error('Failed to save favorites to localStorage:', error);
-        }
+        storage.setItem(FAVORITES_STORAGE_KEY, newFavorites);
+        setFavorites(newFavorites);
     };
 
     // お気に入りを追加
