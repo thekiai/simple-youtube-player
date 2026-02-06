@@ -55,6 +55,10 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
     };
   }, [currentTime, videoId]);
 
+  const handlePlayingChange = useCallback((playing: boolean) => {
+    setIsPlaying(playing);
+  }, []);
+
   const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
   }, []);
@@ -78,14 +82,12 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
   const handlePlay = () => {
     if (player) {
       player.playVideo();
-      setIsPlaying(true);
     }
   };
 
   const handlePause = () => {
     if (player) {
       player.pauseVideo();
-      setIsPlaying(false);
     }
   };
 
@@ -118,7 +120,6 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
       player.seekTo(segment.startTime, true);
       // 再生開始
       player.playVideo();
-      setIsPlaying(true);
     }
   }, [player]);
 
@@ -169,6 +170,7 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
           videoId={videoId}
           onTimeUpdate={handleTimeUpdate}
           onPlayerReady={handlePlayerReady}
+          onPlayingChange={handlePlayingChange}
         />
         
         {/* Favorite Toggle Button - Player Top Right */}
