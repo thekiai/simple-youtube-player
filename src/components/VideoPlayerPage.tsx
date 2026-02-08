@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { PlayerControls } from '../components/PlayerControls';
 import { FavoriteSegmentForm } from '../components/FavoriteSegmentForm';
@@ -7,7 +7,6 @@ import { useFavoriteSegments } from '../hooks/useFavoriteSegments';
 import { useFavoriteVideos } from '../hooks/useFavoriteVideos';
 import { CreateFavoriteSegment } from '../types/favorite';
 import { CreateFavoriteVideo } from '../types/favoriteVideo';
-import { storage } from '../db/storage';
 
 interface VideoPlayerPageProps {
   videoId: string;
@@ -26,49 +25,6 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
   const { favoriteVideos, addFavoriteVideo, removeFavoriteVideo, isFavoriteVideo } = useFavoriteVideos();
   const [isVideoSaved, setIsVideoSaved] = useState(false);
 
-  const currentTimeRef = useRef(0);
-  const lastSavedTimeRef = useRef(0);
-  const hasRestoredRef = useRef(false);
-
-  // currentTimeをrefに同期（イベントハンドラから最新値を参照するため）
-  useEffect(() => {
-    currentTimeRef.current = currentTime;
-  }, [currentTime]);
-
-  // 再生位置を定期的にIndexedDBに保存（5秒ごと）
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const interval = setInterval(() => {
-      const time = currentTimeRef.current;
-      if (time > 0 && Math.abs(time - lastSavedTimeRef.current) >= 5) {
-        lastSavedTimeRef.current = time;
-        storage.setItem(`playback-position-${videoId}`, time);
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isPlaying, videoId]);
-
-  // ページ離脱・アンマウント時に再生位置を保存
-  useEffect(() => {
-    const saveOnUnload = () => {
-      const time = currentTimeRef.current;
-      if (time > 0) {
-        storage.setItem(`playback-position-${videoId}`, time);
-      }
-    };
-    window.addEventListener('beforeunload', saveOnUnload);
-    return () => {
-      saveOnUnload();
-      window.removeEventListener('beforeunload', saveOnUnload);
-    };
-  }, [videoId]);
-
-  const handlePlayingChange = useCallback((playing: boolean) => {
-    setIsPlaying(playing);
-  }, []);
-
   const handleTimeUpdate = useCallback((time: number) => {
     setCurrentTime(time);
   }, []);
@@ -76,28 +32,21 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
   const handlePlayerReady = useCallback((playerInstance: YouTubePlayer | null) => {
     if (playerInstance) {
       setPlayer(playerInstance);
-      // 保存された再生位置を復元
-      if (!hasRestoredRef.current) {
-        hasRestoredRef.current = true;
-        storage.getItem<number>(`playback-position-${videoId}`).then((savedTime) => {
-          if (savedTime && savedTime > 0) {
-            playerInstance.seekTo(savedTime, true);
-            console.log(`Restored playback position: ${savedTime}s`);
-          }
-        });
-      }
+      console.log('Player ready in VideoPlayerPage component');
     }
-  }, [videoId]);
+  }, []);
 
   const handlePlay = () => {
     if (player) {
       player.playVideo();
+      setIsPlaying(true);
     }
   };
 
   const handlePause = () => {
     if (player) {
       player.pauseVideo();
+      setIsPlaying(false);
     }
   };
 
@@ -130,6 +79,7 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
       player.seekTo(segment.startTime, true);
       // 再生開始
       player.playVideo();
+      setIsPlaying(true);
     }
   }, [player]);
 
@@ -180,7 +130,6 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
           videoId={videoId}
           onTimeUpdate={handleTimeUpdate}
           onPlayerReady={handlePlayerReady}
-          onPlayingChange={handlePlayingChange}
         />
         
         {/* Favorite Toggle Button - Player Top Right */}

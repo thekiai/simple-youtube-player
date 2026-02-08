@@ -5,16 +5,14 @@ interface VideoPlayerProps {
   videoId: string;
   onTimeUpdate?: (currentTime: number) => void;
   onPlayerReady?: (player: ReturnType<typeof useYouTubePlayer>['player']) => void;
-  onPlayingChange?: (isPlaying: boolean) => void;
 }
 
-export const VideoPlayer: React.FC<VideoPlayerProps> = ({
-  videoId,
+export const VideoPlayer: React.FC<VideoPlayerProps> = ({ 
+  videoId, 
   onTimeUpdate,
-  onPlayerReady,
-  onPlayingChange
+  onPlayerReady 
 }) => {
-  const { playerRef, player, currentTime, isReady, isPlaying } = useYouTubePlayer(videoId);
+  const { playerRef, player, currentTime, isReady } = useYouTubePlayer(videoId);
 
   React.useEffect(() => {
     if (onTimeUpdate) {
@@ -27,12 +25,6 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       onPlayerReady(player);
     }
   }, [player, isReady, onPlayerReady]);
-
-  React.useEffect(() => {
-    if (onPlayingChange) {
-      onPlayingChange(isPlaying);
-    }
-  }, [isPlaying, onPlayingChange]);
 
   return (
     <div className="w-full relative">
