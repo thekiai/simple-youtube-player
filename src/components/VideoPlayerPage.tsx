@@ -26,34 +26,44 @@ export const VideoPlayerPage: React.FC<VideoPlayerPageProps> = ({ videoId }) => 
   const { favoriteVideos, addFavoriteVideo, removeFavoriteVideo, isFavoriteVideo } = useFavoriteVideos();
   const [isVideoSaved, setIsVideoSaved] = useState(false);
 
+  const currentTimeRef = useRef(0);
   const lastSavedTimeRef = useRef(0);
   const hasRestoredRef = useRef(false);
 
+  // currentTimeをrefに同期（イベントハンドラから最新値を参照するため）
+  useEffect(() => {
+    currentTimeRef.current = currentTime;
+  }, [currentTime]);
+
   // 再生位置を定期的にIndexedDBに保存（5秒ごと）
   useEffect(() => {
-    if (!isPlaying || currentTime === 0) return;
+    if (!isPlaying) return;
 
-    const diff = Math.abs(currentTime - lastSavedTimeRef.current);
-    if (diff >= 5) {
-      lastSavedTimeRef.current = currentTime;
-      storage.setItem(`playback-position-${videoId}`, currentTime);
-    }
-  }, [currentTime, isPlaying, videoId]);
+    const interval = setInterval(() => {
+      const time = currentTimeRef.current;
+      if (time > 0 && Math.abs(time - lastSavedTimeRef.current) >= 5) {
+        lastSavedTimeRef.current = time;
+        storage.setItem(`playback-position-${videoId}`, time);
+      }
+    }, 5000);
 
-  // ページ離脱時に再生位置を保存
+    return () => clearInterval(interval);
+  }, [isPlaying, videoId]);
+
+  // ページ離脱・アンマウント時に再生位置を保存
   useEffect(() => {
     const saveOnUnload = () => {
-      if (currentTime > 0) {
-        storage.setItem(`playback-position-${videoId}`, currentTime);
+      const time = currentTimeRef.current;
+      if (time > 0) {
+        storage.setItem(`playback-position-${videoId}`, time);
       }
     };
     window.addEventListener('beforeunload', saveOnUnload);
     return () => {
-      // コンポーネントアンマウント時にも保存
       saveOnUnload();
       window.removeEventListener('beforeunload', saveOnUnload);
     };
-  }, [currentTime, videoId]);
+  }, [videoId]);
 
   const handlePlayingChange = useCallback((playing: boolean) => {
     setIsPlaying(playing);
